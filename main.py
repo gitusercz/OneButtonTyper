@@ -4,10 +4,10 @@ import math
 
 # Hungarian alphabet
 alphabet = [
-    "A", "Á", "B", "C", "Cs", "D", "Dz", "Dzs", "E", "É", "F",
-    "G", "Gy", "H", "I", "Í", "J", "K", "L", "Ly", "M", "N",
-    "Ny", "O", "Ó", "Ö", "Ő", "P", "Q", "R", "S", "Sz", "T",
-    "Ty", "U", "Ú", "Ü", "Ű", "V", "W", "X", "Y", "Z", "Zs"
+    "_", "E", "T", "A", "L", "K", "N", "R", "S", "I", "O", "Á",
+    "Z", "É", "M", "G", "D", "B", "V", "SZ", "H", "U", "P",
+    "J", "F", "Ó", "Ö", "C", "Ő", "Í", "NY", "Ü", "GY", "CS",
+    "Ú", "Ű", "ZS", "TY", "W", "X", "Y", "Q", "Mentés", "BSpace"
 ]
 
 # Initialize the main window
@@ -59,7 +59,7 @@ def update_highlight():
     elif highlight_mode == 'cell':
         highlight_col = (highlight_col + 1) % num_columns
 
-    highlight_update_id = app.after(2000, update_highlight)
+    highlight_update_id = app.after(600, update_highlight)
 
 # Function to handle left mouse click
 def on_click(event):
@@ -71,7 +71,10 @@ def on_click(event):
     elif highlight_mode == 'cell':
         index = highlight_row * num_columns + highlight_col - 1
         if index < len(alphabet):
-            textbox.insert(tk.END, alphabet[index])
+            if alphabet[index] == "Mentés": on_save()
+            elif  alphabet[index] == "BSpace": textbox.delete("end-2c", "end-1c")
+            else:
+                textbox.insert(tk.END, alphabet[index])
         highlight_mode = 'row'  # Reset to row highlight
         highlight_row = 0  # Start from the first row
 
@@ -80,7 +83,7 @@ def on_click(event):
     highlight_update_id = app.after(0, update_highlight)
 
 # Function to handle double click
-def on_double_click(event):
+def on_save():
     global typed_string, highlight_mode, highlight_update_id
     with open("typed_strings.txt", "a") as file:
         file.write(textbox.get("1.0", tk.END).strip() + "\n")
@@ -88,7 +91,7 @@ def on_double_click(event):
     if highlight_update_id is not None:
         app.after_cancel(highlight_update_id)
     highlight_mode = 'row'  # Restart from row highlight mode
-    highlight_update_id = app.after(2000, update_highlight)
+    highlight_update_id = app.after(600, update_highlight)
 
 # Create labels for the alphabet table
 labels = []
@@ -100,7 +103,6 @@ for i in range(4):
             label = CTkLabel(table_frame, text=alphabet[index], width=40, height=40, corner_radius=5)
             label.grid(row=i, column=j, padx=2, pady=2)
             label.bind("<Button-1>", on_click)
-            label.bind("<Double-1>", on_double_click)
             row_labels.append(label)
     labels.append(row_labels)
 
