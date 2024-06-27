@@ -27,50 +27,68 @@ table_frame.pack()
 num_columns = math.ceil(len(alphabet) / 4)
 
 # Variables to manage highlighting and typing
-highlight_index = 0
+highlight_mode = 'row'  # Modes: 'row', 'cell'
+highlight_row = 0
+highlight_col = 0
 typed_string = ""
-highlight_running = True
 highlight_update_id = None
 
 # Function to update the highlighting
 def update_highlight():
-    global highlight_index, highlight_running, highlight_update_id
-    if highlight_running:
-        for i in range(4):
-            for j in range(num_columns):
-                index = i * num_columns + j
-                if index < len(alphabet):
-                    label = labels[i][j]
-                    if index == highlight_index:
+    global highlight_row, highlight_col, highlight_mode, highlight_update_id
+
+    for i in range(4):
+        for j in range(num_columns):
+            index = i * num_columns + j
+            if index < len(alphabet):
+                label = labels[i][j]
+                if highlight_mode == 'row':
+                    if i == highlight_row:
                         label.configure(bg_color="gray")
                     else:
                         label.configure(bg_color="white")
-        highlight_index = (highlight_index + 1) % len(alphabet)
-        highlight_update_id = app.after(2000, update_highlight)  # Schedule next update
+                elif highlight_mode == 'cell':
+                    if i == highlight_row:
+                        if j == highlight_col:
+                            label.configure(bg_color="gray")
+                        else:
+                            label.configure(bg_color="white")
+
+    if highlight_mode == 'row':
+        highlight_row = (highlight_row + 1) % 4
+    elif highlight_mode == 'cell':
+        highlight_col = (highlight_col + 1) % num_columns
+
+    highlight_update_id = app.after(2000, update_highlight)
 
 # Function to handle left mouse click
 def on_click(event):
-    global typed_string, highlight_index, highlight_running, highlight_update_id
+    global highlight_mode, highlight_row, highlight_col, highlight_update_id
 
-    typed_string += alphabet[highlight_index - 1]
-    textbox.insert(tk.END, alphabet[highlight_index - 1])
-    highlight_index = 0  # Reset the highlight index to start from the beginning
+    if highlight_mode == 'row':
+        highlight_mode = 'cell'
+        highlight_col = 0  # Start cell highlight from the first column
+    elif highlight_mode == 'cell':
+        index = highlight_row * num_columns + highlight_col - 1
+        if index < len(alphabet):
+            textbox.insert(tk.END, alphabet[index])
+        highlight_mode = 'row'  # Reset to row highlight
+        highlight_row = 0  # Start from the first row
+
     if highlight_update_id is not None:
-        app.after_cancel(highlight_update_id)  # Cancel the previous highlight cycle
-    highlight_update_id = app.after(0, update_highlight)  # Restart the highlighting process
+        app.after_cancel(highlight_update_id)
+    highlight_update_id = app.after(0, update_highlight)
 
 # Function to handle double click
 def on_double_click(event):
-    global typed_string, highlight_running, highlight_update_id
+    global typed_string, highlight_mode, highlight_update_id
     with open("typed_strings.txt", "a") as file:
-        file.write(typed_string + "\n")
-    typed_string = ""
+        file.write(textbox.get("1.0", tk.END).strip() + "\n")
     textbox.delete("1.0", tk.END)
     if highlight_update_id is not None:
-        app.after_cancel(highlight_update_id)  # Stop the highlighting process
-    highlight_update_id = None
-    highlight_running = True
-    highlight_update_id = app.after(2000, update_highlight)  # Restart the highlighting process
+        app.after_cancel(highlight_update_id)
+    highlight_mode = 'row'  # Restart from row highlight mode
+    highlight_update_id = app.after(2000, update_highlight)
 
 # Create labels for the alphabet table
 labels = []
