@@ -26,3 +26,20 @@ def play_wav(file_name):
 # Example usage
 if __name__ == "__main__":
     play_wav('your_audio_file.wav')  # Replace with the name of your WAV file
+
+# Function to read the config file
+def read_config():
+    config = {}
+    try:
+        with open("config.txt", "r") as file:
+            for line in file:
+                if '=' in line:
+                    name, value = line.strip().split("=")
+                    config[name.strip()] = value.strip()
+    except FileNotFoundError:
+        print("Config file not found. Using default settings.")
+    return config
+
+# Function to get config value by name
+def get_config_value(config, name, default=None, value_type=str):
+    return value_type(config.get(name, default))

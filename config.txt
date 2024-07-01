@@ -1,0 +1,6 @@
+Cycle time (millisec)=1600
+Window width=1200
+Window height=800
+Font size=24
+Highlight color=white
+Background color=gray
