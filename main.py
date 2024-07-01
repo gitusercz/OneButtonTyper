@@ -4,20 +4,20 @@ import math
 
 # Hungarian alphabet
 alphabet = [
-    "_", "E", "T", "A", "L", "K", "N", "R", "S", "I", "O", "Á",
-    "Z", "É", "M", "G", "D", "B", "V", "SZ", "H", "U", "P",
-    "J", "F", "Ó", "Ö", "C", "Ő", "Í", "NY", "Ü", "GY", "CS",
-    "Ú", "Ű", "ZS", "TY", "W", "X", "Y", "Q", "Mentés", "BSpace"
+    "_", "BSpace","E", "T", "A", "L", "K", "N", "R", "S", "I", "Újra",
+    "O", "Á", "Z", "É", "M", "G", "D", "B", "V", "SZ", "H", "Újra",
+    "U", "P", "J", "F", "Ó", "Ö", "C", "Ő", "Í", "NY", "Ü", "Újra",
+    "GY", "CS", "Ú", "Ű", "ZS", "TY", "W", "X", "Y", "Q", "Mentés", "Újra"
 ]
 
 # Initialize the main window
 app = CTk()
-app.title("Hungarian Alphabet Table")
-app.geometry("600x400")
+app.title("1-bit typer")
+app.geometry("1200x800")
 
 # Textbox to display the typed string
-textbox = CTkTextbox(app, width=550, height=50)
-textbox.pack(pady=20)
+textbox = CTkTextbox(app, width=1100, height=100, font=("Helvetica", 24))
+textbox.pack(pady=40)
 
 # Frame for the alphabet table
 table_frame = CTkFrame(app)
@@ -44,15 +44,15 @@ def update_highlight():
                 label = labels[i][j]
                 if highlight_mode == 'row':
                     if i == highlight_row:
-                        label.configure(bg_color="gray")
-                    else:
                         label.configure(bg_color="white")
+                    else:
+                        label.configure(bg_color="gray")
                 elif highlight_mode == 'cell':
                     if i == highlight_row:
                         if j == highlight_col:
-                            label.configure(bg_color="gray")
-                        else:
                             label.configure(bg_color="white")
+                        else:
+                            label.configure(bg_color="gray")
 
     if highlight_mode == 'row':
         highlight_row = (highlight_row + 1) % 4
@@ -72,6 +72,7 @@ def on_click(event):
         index = highlight_row * num_columns + highlight_col - 1
         if index < len(alphabet):
             if alphabet[index] == "Mentés": on_save()
+            elif alphabet[index] == "Újra": pass
             elif  alphabet[index] == "BSpace": textbox.delete("end-2c", "end-1c")
             else:
                 textbox.insert(tk.END, alphabet[index])
@@ -100,8 +101,8 @@ for i in range(4):
     for j in range(num_columns):
         index = i * num_columns + j
         if index < len(alphabet):
-            label = CTkLabel(table_frame, text=alphabet[index], width=40, height=40, corner_radius=5)
-            label.grid(row=i, column=j, padx=2, pady=2)
+            label = CTkLabel(table_frame, text=alphabet[index], width=80, height=80, corner_radius=10, font=("Helvetica", 24))
+            label.grid(row=i, column=j, padx=4, pady=4)
             label.bind("<Button-1>", on_click)
             row_labels.append(label)
     labels.append(row_labels)
