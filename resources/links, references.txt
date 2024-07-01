@@ -1,0 +1,9 @@
+https://www.reddit.com/r/hungary/comments/m5s1bk/oc_a_magyar_%C3%A1b%C3%A9c%C3%A9_bet%C5%B1inek_el%C5%91fordul%C3%A1sa_a_100000/#lightbox
+
+icon from: 
+https://www.iconarchive.com/show/material-icons-by-pictogrammers/button-pointer-icon.html
+
+Showing all installed Windows voices:
+https://www.youtube.com/watch?v=r9VZoWik9c0
+
+pyinstaller --onefile -w -i icon.ico main.py
